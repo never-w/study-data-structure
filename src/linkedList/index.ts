@@ -22,6 +22,7 @@ export class LinkedNode<T = any> {
 export class LinkedList<T = any> implements ILinkedList<T> {
   head: LinkedNode<T> | null = null
   private size: number = 0
+
   private getNode(position: number) {
     let index = 0
     let current = this.head
