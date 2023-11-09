@@ -7,15 +7,24 @@ interface IBSTree<T> {
   levelOrderTraverse: () => void
   getMaxValue: () => T | null
   getMinValue: () => T | null
-  search: (value: T) => boolean
+  search: (value: T) => TreeNode<T> | null
+  remove: (value: T) => boolean
 }
 
 class TreeNode<T> {
+  parent: TreeNode<T> | null = null
   left: TreeNode<T> | null = null
   right: TreeNode<T> | null = null
   value: T
   constructor(value: T) {
     this.value = value
+  }
+
+  get isLeft(): boolean {
+    return !!(this.parent && this.parent.left === this)
+  }
+  get isRight(): boolean {
+    return !!(this.parent && this.parent.right === this)
   }
 }
 
@@ -28,6 +37,45 @@ class BSTree<T> implements IBSTree<T> {
   print() {
     btPrint(this.root)
   }
+
+  // 自己实现不使用递归方式 添加数据
+  //   insert(value: T) {
+  //     const newNode = new TreeNode(value)
+  //     let current = this.root
+  //     let previous = null
+  //     let left = false
+  //     let right = false
+
+  //     if (!current) {
+  //       this.root = newNode
+  //     } else {
+  //       while (current) {
+  //         if (current.value === value) {
+  //           left = false
+  //           right = false
+  //           return
+  //         } else if (current.value > value) {
+  //           previous = current
+  //           current = current.left
+  //           left = true
+  //           right = false
+  //         } else {
+  //           previous = current
+  //           current = current.right
+  //           right = true
+  //           left = false
+  //         }
+  //       }
+  //     }
+
+  //     if (left && previous) {
+  //       previous.left = newNode
+  //     }
+
+  //     if (right && previous) {
+  //       previous.right = newNode
+  //     }
+  //   }
 
   /** 插入节点 */
   insert(value: T) {
@@ -132,18 +180,41 @@ class BSTree<T> implements IBSTree<T> {
   /** 搜索相等值 */
   search(value: T) {
     let current = this.root
+    let parent: TreeNode<T> | null = null
 
     while (current) {
-      if (current.value === value) {
-        return true
-      } else if (current.value > value) {
+      if (current.value === value) return current
+
+      parent = current
+      if (current.value > value) {
         current = current.left
       } else {
         current = current.right
       }
+
+      if (current) current.parent = parent
     }
 
-    return false
+    return null
+  }
+
+  remove(value: T) {
+    const current = this.search(value)
+
+    // 找不到元素就直接返回 false
+    if (!current) return false
+
+    // 1. 删除的节点是 叶子节点情况
+    if (current.left === null && current.right === null) {
+      if (!this.root) {
+        this.root = null
+      } else {
+        if (current.isLeft) current.parent!.left = null
+        if (current.isRight) current.parent!.right = null
+      }
+    }
+
+    return true
   }
 }
 
@@ -168,8 +239,10 @@ bst.insert(25)
 bst.insert(6)
 
 bst.print()
+bst.remove(12)
+bst.print()
 
-bst.levelOrderTraverse()
+// bst.levelOrderTraverse()
 
-console.log("最大值:", bst.getMaxValue())
-console.log("最小值:", bst.getMinValue())
+// console.log("最大值:", bst.getMaxValue())
+// console.log("最小值:", bst.getMinValue())
