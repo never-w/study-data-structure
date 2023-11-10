@@ -183,7 +183,10 @@ class BSTree<T> implements IBSTree<T> {
     let parent: TreeNode<T> | null = null
 
     while (current) {
-      if (current.value === value) return current
+      if (current.value === value) {
+        current.parent = parent
+        return current
+      }
 
       parent = current
       if (current.value > value) {
@@ -191,34 +194,119 @@ class BSTree<T> implements IBSTree<T> {
       } else {
         current = current.right
       }
-
-      if (current) current.parent = parent
     }
 
     return null
   }
 
-  remove(value: T) {
-    const current = this.search(value)
+  // 为优化版本的 remove 操作
+  //   remove(value: T) {
+  //     const current = this.search(value)
 
-    // 找不到元素就直接返回 false
+  //     // 找不到元素就直接返回 false
+  //     if (!current) return false
+
+  //     // 1. 删除的节点是 叶子节点情况
+  //     if (current.left === null && current.right === null) {
+  //       if (!this.root) {
+  //         this.root = null
+  //       } else {
+  //         if (current.isLeft) current.parent!.left = null
+  //         if (current.isRight) current.parent!.right = null
+  //       }
+  //     }
+
+  //     // 2. 删除的节点 只存在一个子节点
+  //     else if (current.right === null) {
+  //       if (!this.root) {
+  //         this.root = current.left
+  //       } else {
+  //         if (current.isLeft) current.parent!.left = current.left
+  //         if (current.isRight) current.parent!.right = current.left
+  //       }
+  //     } else if (current.left === null) {
+  //       if (!this.root) {
+  //         this.root = current.right
+  //       } else {
+  //         if (current.isLeft) current.parent!.left = current.right
+  //         if (current.isRight) current.parent!.right = current.right
+  //       }
+  //     }
+
+  //     // 3. 删除的节点，该左右两个子节点都存在甚至子节点还存在子节点情况
+  //     else {
+  //       const successor = this.getSuccessor(current)
+
+  //       if (successor === this.root) {
+  //         this.root = successor
+  //       } else {
+  //         if (current.isLeft) current.parent!.left = successor
+  //         if (current.isRight) current.parent!.right = successor
+  //       }
+  //     }
+
+  //     return true
+  //   }
+
+  remove(value: T) {
+    // 1.查找 value 所在的节点
+    const current = this.search(value)
     if (!current) return false
 
-    // 1. 删除的节点是 叶子节点情况
+    let replaceNode: TreeNode<T> | null = null
+    // 2.获取到三个东西，当前节点 / 父节点 / 当前节点是左子节点，还是右子节点
+    // console.log('当前节点：', current.value, '父节点：', current.parent?.value)
+    // 删除的是叶子节点
     if (current.left === null && current.right === null) {
-      if (!this.root) {
-        this.root = null
-      } else {
-        if (current.isLeft) current.parent!.left = null
-        if (current.isRight) current.parent!.right = null
-      }
+      replaceNode = null
+    }
+
+    // 3.只有一个子节点
+    else if (current.right === null) {
+      // 只有左子节点
+      replaceNode = current.left
+    } else if (current.left === null) {
+      // 只有右子节点
+      replaceNode = current.right
+    }
+
+    // 4.有两个子节点
+    else {
+      const successor = this.getSuccessor(current)
+      replaceNode = successor
+    }
+
+    if (current === this.root) {
+      this.root = replaceNode
+    } else if (current.isLeft) {
+      current.parent!.left = replaceNode
+    } else {
+      current.parent!.right = replaceNode
     }
 
     return true
   }
-}
+  /** 比 current 大一点点的节点，一定是 current 右子树的最小值，它被称为 current 的后继。 */
+  private getSuccessor(delNode: TreeNode<T>) {
+    let current = delNode.right
+    let successor: TreeNode<T> | null = null
 
-export default BSTree
+    while (current) {
+      successor = current
+      current = current.left
+
+      if (current) current.parent = successor
+    }
+
+    if (successor !== delNode.right) {
+      delNode.right!.left = null
+      successor!.right = delNode.right
+    }
+
+    successor!.left = delNode.left
+    return successor
+  }
+}
 
 // 测试
 const bst = new BSTree<number>()
@@ -240,6 +328,10 @@ bst.insert(6)
 
 bst.print()
 bst.remove(12)
+bst.print()
+bst.remove(13)
+bst.print()
+bst.remove(7)
 bst.print()
 
 // bst.levelOrderTraverse()
