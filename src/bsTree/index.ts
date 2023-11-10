@@ -300,7 +300,7 @@ class BSTree<T> implements IBSTree<T> {
     }
 
     if (successor !== delNode.right) {
-      delNode.right!.left = null
+      successor!.parent!.left = successor!.right
       successor!.right = delNode.right
     }
 
@@ -327,12 +327,16 @@ bst.insert(18)
 bst.insert(25)
 bst.insert(6)
 
+// bst.print()
+// bst.remove(12)
+// bst.print()
+// bst.remove(13)
+// bst.print()
+// bst.remove(7)
+// bst.print()
+
 bst.print()
-bst.remove(12)
-bst.print()
-bst.remove(13)
-bst.print()
-bst.remove(7)
+bst.remove(11)
 bst.print()
 
 // bst.levelOrderTraverse()
