@@ -4,6 +4,7 @@ interface IBSTree<T> {
   insert: (value: T) => void
   preOrderTraverse: () => void
   inOrderTraverse: () => void
+  postOrderTraverse: () => void
   levelOrderTraverse: () => void
   getMaxValue: () => T | null
   getMinValue: () => T | null
