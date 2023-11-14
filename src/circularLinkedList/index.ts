@@ -60,7 +60,7 @@ class CircularLinkedList<T> implements ICircularLinkedList<T> {
     this.tail = newNode
 
     // 将 tail.next 指向 head
-    this.tail!.next = this.head
+    this.tail.next = this.head
 
     this.length++
   }
