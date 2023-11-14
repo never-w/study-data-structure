@@ -109,7 +109,7 @@ class CircularLinkedList<T> implements ICircularLinkedList<T> {
     }
 
     // 在头部，尾部插入节点时，要改变 tail.next 的指向
-    if (position === this.length - 1 || position === 0) {
+    if (position === this.length || position === 0) {
       // 更新 tail
       this.tail!.next = this.head
     }
@@ -142,7 +142,7 @@ class CircularLinkedList<T> implements ICircularLinkedList<T> {
     }
 
     // 在头部，尾部删除节点时，要改变 tail.next 的指向
-    if (this.tail && (position === 0 || position === this.length)) {
+    if (this.tail && (position === 0 || position === this.length - 1)) {
       // 更新 tail
       this.tail.next = this.head
     }
