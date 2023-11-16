@@ -1,3 +1,5 @@
+import { cbtPrint } from "hy-algokit"
+
 interface IHeap<T> {
   insert: (value: T) => void
   extract: () => T | undefined
@@ -112,6 +114,10 @@ class MaxHeap<T> implements IHeap<T> {
   isEmpty() {
     return this.length === 0
   }
+
+  print() {
+    cbtPrint(this.data)
+  }
 }
 
 /** 最小堆 */
@@ -200,6 +206,10 @@ class MinHeap<T> implements IHeap<T> {
   isEmpty() {
     return this.length === 0
   }
+
+  print() {
+    cbtPrint(this.data)
+  }
 }
 
 // 测试
@@ -208,7 +218,7 @@ const heap = new MaxHeap<number>()
 for (const item of arr) {
   heap.insert(item)
 }
-console.log(heap.data, " MaxHeap")
+heap.print()
 
 // 测试
 const arr1 = [9, 11, 20, 56, 23, 45]
@@ -216,11 +226,4 @@ const heap1 = new MinHeap<number>()
 for (const item of arr1) {
   heap1.insert(item)
 }
-console.log(heap1.data, " MinHeap")
-
-// console.log(heap.extract())
-// console.log(heap.data, "+++")
-// heap.insert(133)
-// console.log(heap.data)
-// heap.insert(65)
-// console.log(heap.data)
+heap1.print()
