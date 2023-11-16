@@ -9,7 +9,7 @@ interface IHeap<T> {
 }
 
 /** 最大堆 */
-class MaxHeap<T> implements IHeap<T> {
+export class MaxHeap<T> implements IHeap<T> {
   data: T[] = []
   private length: number = 0
 
