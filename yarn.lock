@@ -74,7 +74,7 @@ diff@^4.0.1:
 
 hy-algokit@^1.4.0:
   version "1.4.0"
-  resolved "https://registry.npmjs.org/hy-algokit/-/hy-algokit-1.4.0.tgz#e55eaa25ab1da2f62fe2f7508c17aaf6e42af707"
+  resolved "https://registry.yarnpkg.com/hy-algokit/-/hy-algokit-1.4.0.tgz#e55eaa25ab1da2f62fe2f7508c17aaf6e42af707"
   integrity sha512-Eehnx7YS7VUzZsuntin9B2kolfIWYtPOsh922ZQ/ZUZxP1nUIWqIw2sna5lXpU5SzkOugeNdIDGN1sRnv3yeIw==
 
 make-error@^1.1.1:
