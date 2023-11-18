@@ -47,10 +47,72 @@ class AVLTreeNode<T> {
     // 这里是第三种情况表示高度相等情况，但是这种情况基本不可能
     return this.isLeft ? this.left : this.right
   }
-}
 
-// const avlNode1 = new AVLTreeNode(6)
-// console.log(avlNode1.getHeight()) // 1
-// avlNode1.right = new AVLTreeNode(7)
-// avlNode1.right.right = new AVLTreeNode(8)
-// console.log(avlNode1.getHeight()) // 3
+  /** LL情况 --> 进行右旋转 --> 一共进行四部曲 */
+  rightRotation() {
+    const isLeft = this.isLeft
+    const isRight = this.isRight
+
+    // 1. 处理pivot节点
+    const pivot = this.left!
+    pivot.parent = this.parent
+
+    // 2. 处理pivot的right
+    this.left = pivot.right
+    if (pivot.right) {
+      pivot.right.parent = this
+    }
+
+    // 3. 处理this（轴心的父节点）
+    pivot.right = this
+    this.parent = pivot
+
+    // 4. 挂载pivot
+    if (!pivot.parent) {
+      // 4.1 pivot作为根节点
+      return pivot
+    } else if (isLeft) {
+      // 4.2 pivot作为父节点的左子节点
+      pivot.parent.left = pivot
+    } else if (isRight) {
+      // 4.3 pivot作为父节点的右子节点
+      pivot.parent.right = pivot
+    }
+
+    return pivot
+  }
+
+  /** RR情况 --> 进行左旋转 --> 四部曲 */
+  leftRotation() {
+    const isLeft = this.isLeft
+    const isRight = this.isRight
+
+    // 1. 处理pivot节点
+    const pivot = this.right!
+    pivot.parent = this.parent
+
+    // 2. 处理pivot的left
+    this.right = pivot.left
+    if (pivot.left) {
+      pivot.left.parent = this
+    }
+
+    // 3. 处理this（轴心的父节点）
+    this.parent = pivot
+    pivot.left = this
+
+    // 4. 挂载pivot
+    if (!pivot.parent) {
+      // 4.1 pivot作为根节点
+      return pivot
+    } else if (isLeft) {
+      // 4.2 pivot作为父节点的左子节点
+      pivot.parent.left = pivot
+    } else if (isRight) {
+      // 4.3 pivot作为父节点的右子节点
+      pivot.parent.right = pivot
+    }
+
+    return pivot
+  }
+}
