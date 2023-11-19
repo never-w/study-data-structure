@@ -1,3 +1,5 @@
+import { btPrint } from 'hy-algokit'
+
 class AVLTreeNode<T> {
   value: T
   left: AVLTreeNode<T> | null = null
@@ -116,3 +118,235 @@ class AVLTreeNode<T> {
     return pivot
   }
 }
+
+class AVLTree<T> {
+  root: AVLTreeNode<T> | null = null
+
+  /** 再平衡 */
+  reBalance(root: AVLTreeNode<T>) {
+    const pivot = root.higherChild()
+    const current = pivot?.higherChild()
+
+    let resultNode: AVLTreeNode<T> | null = null
+    if (pivot?.isLeft) {
+      if (current?.isLeft) {
+        // LL 情况
+        resultNode = root.rightRotation()
+      } else {
+        // LR 情况
+        pivot.leftRotation()
+        resultNode = root.rightRotation()
+      }
+    } else {
+      if (current?.isRight) {
+        // RR 情况
+        resultNode = root.leftRotation()
+      } else {
+        // RL 情况
+        pivot?.rightRotation()
+        resultNode = root.leftRotation()
+      }
+    }
+
+    if (!resultNode.parent) {
+      this.root = resultNode
+    }
+  }
+
+  /** 插入节点 */
+  insert(value: T) {
+    const newNode = new AVLTreeNode(value)
+
+    if (!this.root) {
+      this.root = newNode
+    } else {
+      this.insertNode(this.root, newNode)
+    }
+  }
+  private insertNode(node: AVLTreeNode<T>, newNode: AVLTreeNode<T>) {
+    if (newNode.value < node.value) {
+      if (!node.left) {
+        node.left = newNode
+        newNode.parent = node // 新增插入的节点的 parent 引用
+      } else {
+        this.insertNode(node.left, newNode)
+      }
+    } else {
+      if (!node.right) {
+        node.right = newNode
+        newNode.parent = node // 新增插入的节点的 parent 引用
+      } else {
+        this.insertNode(node.right, newNode)
+      }
+    }
+  }
+
+  /** 先序遍历 */
+  preOrderTraverse() {
+    this.preOrderTraverseNode(this.root)
+  }
+  private preOrderTraverseNode(node: AVLTreeNode<T> | null) {
+    if (node) {
+      console.log(node.value)
+      this.preOrderTraverseNode(node.left)
+      this.preOrderTraverseNode(node.right)
+    }
+  }
+
+  /** 中序遍历 */
+  inOrderTraverse() {
+    this.inOrderTraverseNode(this.root)
+  }
+  private inOrderTraverseNode(node: AVLTreeNode<T> | null) {
+    if (node) {
+      this.inOrderTraverseNode(node.left)
+      console.log(node.value)
+      this.inOrderTraverseNode(node.right)
+    }
+  }
+
+  /** 后序遍历 */
+  postOrderTraverse() {
+    this.postOrderTraverseNode(this.root)
+  }
+  private postOrderTraverseNode(node: AVLTreeNode<T> | null) {
+    if (node) {
+      this.postOrderTraverseNode(node.left)
+      this.postOrderTraverseNode(node.right)
+      console.log(node.value)
+    }
+  }
+
+  /** 层序遍历 */
+  levelOrderTraverse() {
+    if (!this.root) return
+
+    const queue: AVLTreeNode<T>[] = [this.root]
+
+    while (queue.length) {
+      const current = queue.shift()
+      console.log(current?.value)
+
+      if (current?.left) {
+        queue.push(current.left)
+      }
+
+      if (current?.right) {
+        queue?.push(current.right)
+      }
+    }
+  }
+
+  /** 取最大值 */
+  getMaxValue() {
+    let current = this.root
+    while (current && current?.right) {
+      current = current.right
+    }
+    return current?.value ?? null
+  }
+
+  /** 取最小值 */
+  getMinValue() {
+    let current = this.root
+    while (current && current?.left) {
+      current = current.left
+    }
+    return current?.value ?? null
+  }
+
+  print() {
+    btPrint(this.root)
+  }
+
+  /** 搜索相等值 */
+  search(value: T) {
+    let current = this.root
+    let parent: AVLTreeNode<T> | null = null
+
+    while (current) {
+      if (current.value === value) {
+        current.parent = parent
+        return current
+      }
+
+      parent = current
+      if (current.value > value) {
+        current = current.left
+      } else {
+        current = current.right
+      }
+    }
+
+    return null
+  }
+
+  remove(value: T) {
+    // 1.查找 value 所在的节点
+    const current = this.search(value)
+    if (!current) return false
+
+    let replaceNode: AVLTreeNode<T> | null = null
+    // 2.获取到三个东西，当前节点 / 父节点 / 当前节点是左子节点，还是右子节点
+    // console.log('当前节点：', current.value, '父节点：', current.parent?.value)
+    // 删除的是叶子节点
+    if (current.left === null && current.right === null) {
+      replaceNode = null
+    }
+
+    // 3.只有一个子节点
+    else if (current.right === null) {
+      // 只有左子节点
+      replaceNode = current.left
+    } else if (current.left === null) {
+      // 只有右子节点
+      replaceNode = current.right
+    }
+
+    // 4.有两个子节点
+    else {
+      const successor = this.getSuccessor(current)
+      replaceNode = successor
+    }
+
+    if (current === this.root) {
+      this.root = replaceNode
+    } else if (current.isLeft) {
+      current.parent!.left = replaceNode
+    } else {
+      current.parent!.right = replaceNode
+    }
+
+    return true
+  }
+  /** 比 current 大一点点的节点，一定是 current 右子树的最小值，它被称为 current 的后继。 */
+  private getSuccessor(delNode: AVLTreeNode<T>) {
+    let current = delNode.right
+    let successor: AVLTreeNode<T> | null = null
+
+    while (current) {
+      successor = current
+      current = current.left
+
+      if (current) current.parent = successor
+    }
+
+    if (successor !== delNode.right) {
+      successor!.parent!.left = successor!.right
+      successor!.right = delNode.right
+    }
+
+    successor!.left = delNode.left
+    return successor
+  }
+}
+
+// 测试
+const avlTree = new AVLTree<number>()
+avlTree.insert(10)
+avlTree.insert(15)
+avlTree.insert(20)
+avlTree.print()
+
+avlTree.reBalance(avlTree.root!)
+avlTree.print()
