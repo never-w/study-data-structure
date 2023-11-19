@@ -9,6 +9,13 @@ class AVLTreeNode<T> {
     this.value = value
   }
 
+  get isLeft(): boolean {
+    return !!(this.parent && this.parent.left === this)
+  }
+  get isRight(): boolean {
+    return !!(this.parent && this.parent.right === this)
+  }
+
   private getHeight(): number {
     const leftHeight = this.left?.getHeight() ?? 0
     const rightHeight = this.right?.getHeight() ?? 0
@@ -18,13 +25,6 @@ class AVLTreeNode<T> {
     const leftHeight = this.left?.getHeight() ?? 0
     const rightHeight = this.right?.getHeight() ?? 0
     return leftHeight - rightHeight
-  }
-
-  get isLeft(): boolean {
-    return !!(this.parent && this.parent.left === this)
-  }
-  get isRight(): boolean {
-    return !!(this.parent && this.parent.right === this)
   }
   get isBalanced() {
     const factor = this.getBalanceFactor()
@@ -39,7 +39,7 @@ class AVLTreeNode<T> {
        事实上，基本不会出现这种情况；
        因为一个节点的左、右子节点高度要是相等，那么该节点就应该是平衡的。
      */
-  public higherChild() {
+  higherChild() {
     const leftHeight = this.left?.getHeight() ?? 0
     const rightHeight = this.right?.getHeight() ?? 0
 
