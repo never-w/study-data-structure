@@ -123,7 +123,7 @@ class AVLTree<T> {
   root: AVLTreeNode<T> | null = null
 
   /** 再平衡 */
-  reBalance(root: AVLTreeNode<T>) {
+  private reBalance(root: AVLTreeNode<T>) {
     const pivot = root.higherChild()
     const current = pivot?.higherChild()
 
@@ -153,6 +153,21 @@ class AVLTree<T> {
     }
   }
 
+  private checkBalance(node: AVLTreeNode<T>, isAdd = true) {
+    let current = node.parent
+    while (current) {
+      if (!current.isBalanced) {
+        this.reBalance(current)
+
+        // 这个位置是旋转完成后的操作
+        // insert，不需要进一步向上查找父节点，直接 break；
+        // delete，需要进一步向上查找，不能 break
+        if (isAdd) break
+      }
+      current = current.parent
+    }
+  }
+
   /** 插入节点 */
   insert(value: T) {
     const newNode = new AVLTreeNode(value)
@@ -162,6 +177,8 @@ class AVLTree<T> {
     } else {
       this.insertNode(this.root, newNode)
     }
+
+    this.checkBalance(newNode)
   }
   private insertNode(node: AVLTreeNode<T>, newNode: AVLTreeNode<T>) {
     if (newNode.value < node.value) {
@@ -286,6 +303,8 @@ class AVLTree<T> {
     const current = this.search(value)
     if (!current) return false
 
+    let delNode = current
+
     let replaceNode: AVLTreeNode<T> | null = null
     // 2.获取到三个东西，当前节点 / 父节点 / 当前节点是左子节点，还是右子节点
     // console.log('当前节点：', current.value, '父节点：', current.parent?.value)
@@ -306,7 +325,9 @@ class AVLTree<T> {
     // 4.有两个子节点
     else {
       const successor = this.getSuccessor(current)
-      replaceNode = successor
+      current.value = successor!.value
+      delNode = successor!
+      replaceNode = current
     }
 
     if (current === this.root) {
@@ -317,9 +338,13 @@ class AVLTree<T> {
       current.parent!.right = replaceNode
     }
 
+    if (replaceNode && current.parent) {
+      replaceNode.parent = current.parent
+    }
+
+    this.checkBalance(delNode, false)
     return true
   }
-  /** 比 current 大一点点的节点，一定是 current 右子树的最小值，它被称为 current 的后继。 */
   private getSuccessor(delNode: AVLTreeNode<T>) {
     let current = delNode.right
     let successor: AVLTreeNode<T> | null = null
@@ -333,10 +358,18 @@ class AVLTree<T> {
 
     if (successor !== delNode.right) {
       successor!.parent!.left = successor!.right
-      successor!.right = delNode.right
+      // successor!.right = delNode.right
+      if (successor?.right) {
+        successor.right.parent = successor.parent
+      }
+    } else {
+      delNode.right = successor!.right
+      if (successor?.right) {
+        successor.right.parent = delNode
+      }
     }
 
-    successor!.left = delNode.left
+    // successor!.left = delNode.left
     return successor
   }
 }
@@ -344,9 +377,10 @@ class AVLTree<T> {
 // 测试
 const avlTree = new AVLTree<number>()
 avlTree.insert(10)
+avlTree.insert(8)
 avlTree.insert(15)
 avlTree.insert(20)
 avlTree.print()
 
-avlTree.reBalance(avlTree.root!)
+avlTree.remove(8)
 avlTree.print()
