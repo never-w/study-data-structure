@@ -64,7 +64,7 @@ class DoublyLinkedList<T> {
   }
 
   insert(position: number, value: T) {
-    if (position < 0 || position > this.length - 1) return false
+    if (position < 0 || position > this.length) return false
 
     if (position === 0) {
       this.prepend(value)
@@ -98,7 +98,7 @@ class DoublyLinkedList<T> {
         this.head = this.head!.next
         this.head!.prev = null
       }
-    } else if (position === this.length - 1) {
+    } else if (position === this.length) {
       // 删除的是尾节点
       current = this.tail
       this.tail = this.tail!.prev
