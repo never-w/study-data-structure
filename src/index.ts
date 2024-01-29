@@ -57,6 +57,23 @@ class BSTree<T> {
       }
     }
   }
+  preOrderTraverseUseOfStackOptimized() {
+    if (this.root) {
+      const stack: (TreeNode<T> | null)[] = [this.root]
+      while (stack.length) {
+        const node = stack.pop()
+        if (!node) {
+          console.log(stack.pop()?.value)
+          continue
+        }
+
+        if (node.right) stack.push(node.right)
+        if (node.left) stack.push(node.left)
+        stack.push(node)
+        stack.push(null)
+      }
+    }
+  }
 
   preOrderTraverse() {
     this.preOrderTraverseNode(this.root)
@@ -85,6 +102,23 @@ class BSTree<T> {
       }
     }
   }
+  inOrderTraverseUseOfStackOptimized() {
+    if (this.root) {
+      const stack: (TreeNode<T> | null)[] = [this.root]
+      while (stack.length) {
+        const node = stack.pop()
+        if (!node) {
+          console.log(stack.pop()?.value)
+          continue
+        }
+
+        if (node.right) stack.push(node.right)
+        stack.push(node)
+        stack.push(null)
+        if (node.left) stack.push(node.left)
+      }
+    }
+  }
 
   inOrderTraverse() {
     this.inOrderTraverseNode(this.root)
@@ -110,6 +144,23 @@ class BSTree<T> {
     }
 
     console.log(res.reverse())
+  }
+  postOrderTraverseUseOfStackOptimized() {
+    if (this.root) {
+      const stack: (TreeNode<T> | null)[] = [this.root]
+      while (stack.length) {
+        const node = stack.pop()
+        if (!node) {
+          console.log(stack.pop()?.value)
+          continue
+        }
+
+        stack.push(node)
+        stack.push(null)
+        if (node.right) stack.push(node.right)
+        if (node.left) stack.push(node.left)
+      }
+    }
   }
 
   postOrderTraverse() {
@@ -241,12 +292,16 @@ bst.insert(25)
 bst.insert(6)
 
 bst.print()
-// bst.preOrderTraverseUseOfStack()
-// bst.inOrderTraverse()
+// bst.preOrderTraverse()
+// console.log("\n\n")
+// bst.preOrderTraverseUseOfStackOptimized()
 
 // bst.inOrderTraverseUseOfStack()
 // bst.inOrderTraverse()
+// console.log("\n\n")
+// bst.inOrderTraverseUseOfStackOptimized()
 
 bst.postOrderTraverse()
 console.log("\n\n")
-bst.postOrderTraverseUseOfStack()
+bst.postOrderTraverseUseOfStackOptimized()
+// bst.postOrderTraverseUseOfStack()

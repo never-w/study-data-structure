@@ -116,6 +116,24 @@ class BSTree<T> implements IBSTree<T> {
       }
     }
   }
+  /** 优化版本（类似递归那种） */
+  preOrderTraverseUseOfStackOptimized() {
+    if (this.root) {
+      const stack: (TreeNode<T> | null)[] = [this.root]
+      while (stack.length) {
+        const node = stack.pop()
+        if (!node) {
+          console.log(stack.pop()?.value)
+          continue
+        }
+
+        if (node.right) stack.push(node.right)
+        if (node.left) stack.push(node.left)
+        stack.push(node)
+        stack.push(null)
+      }
+    }
+  }
 
   /** 先序遍历 */
   preOrderTraverse() {
@@ -146,6 +164,24 @@ class BSTree<T> implements IBSTree<T> {
       }
     }
   }
+  /** 优化版本（类似递归写法那种） */
+  inOrderTraverseUseOfStackOptimized() {
+    if (this.root) {
+      const stack: (TreeNode<T> | null)[] = [this.root]
+      while (stack.length) {
+        const node = stack.pop()
+        if (!node) {
+          console.log(stack.pop()?.value)
+          continue
+        }
+
+        if (node.right) stack.push(node.right)
+        stack.push(node)
+        stack.push(null)
+        if (node.left) stack.push(node.left)
+      }
+    }
+  }
 
   /** 中序遍历 */
   inOrderTraverse() {
@@ -156,6 +192,42 @@ class BSTree<T> implements IBSTree<T> {
       this.inOrderTraverseNode(node.left)
       console.log(node.value)
       this.inOrderTraverseNode(node.right)
+    }
+  }
+
+  /** 使用栈的后续遍历 */
+  postOrderTraverseUseOfStack() {
+    const res = []
+    if (this.root) {
+      const stack = [this.root]
+      while (stack.length) {
+        const node = stack.pop()
+        res.push(node?.value)
+        if (node?.left) stack.push(node.left)
+        if (node?.right) stack.push(node.right)
+      }
+    }
+
+    res.reverse().forEach((node) => {
+      console.log(node)
+    })
+  }
+  // 优化统一版本（类似递归那种）
+  postOrderTraverseUseOfStackOptimized() {
+    if (this.root) {
+      const stack: (TreeNode<T> | null)[] = [this.root]
+      while (stack.length) {
+        const node = stack.pop()
+        if (!node) {
+          console.log(stack.pop()?.value)
+          continue
+        }
+
+        stack.push(node)
+        stack.push(null)
+        if (node.right) stack.push(node.right)
+        if (node.left) stack.push(node.left)
+      }
     }
   }
 
