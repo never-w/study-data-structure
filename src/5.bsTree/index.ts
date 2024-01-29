@@ -243,6 +243,27 @@ class BSTree<T> implements IBSTree<T> {
     }
   }
 
+  /** 层序遍历，可以区分一层一层的二位数组 */
+  levelOrderTraverseOptimized() {
+    const res = []
+    if (this.root) {
+      const queue = [this.root]
+      while (queue.length) {
+        const len = queue.length
+        const tmpArr = []
+        for (let i = 0; i < len; i++) {
+          const node = queue.shift()!
+          tmpArr.push(node?.value)
+          if (node.left) queue.push(node.left)
+          if (node.right) queue.push(node.right)
+        }
+        res.push(tmpArr)
+      }
+    }
+    console.log(res)
+    return res
+  }
+
   /** 层序遍历 */
   levelOrderTraverse() {
     if (!this.root) return
@@ -439,10 +460,11 @@ bst.insert(6)
 // bst.print()
 
 bst.print()
-bst.remove(11)
-bst.print()
+// bst.remove(11)
+// bst.print()
 
 // bst.levelOrderTraverse()
+bst.levelOrderTraverseOptimized()
 
 // console.log("最大值:", bst.getMaxValue())
 // console.log("最小值:", bst.getMinValue())
