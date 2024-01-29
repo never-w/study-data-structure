@@ -104,6 +104,19 @@ class BSTree<T> implements IBSTree<T> {
     }
   }
 
+  /** 使用栈的先序遍历 */
+  preOrderTraverseUseOfStack() {
+    if (this.root) {
+      const stack = [this.root]
+      while (!!stack.length) {
+        const node = stack.pop()
+        console.log(node?.value)
+        if (node?.right) stack.push(node.right)
+        if (node?.left) stack.push(node.left)
+      }
+    }
+  }
+
   /** 先序遍历 */
   preOrderTraverse() {
     this.preOrderTraverseNode(this.root)
@@ -113,6 +126,24 @@ class BSTree<T> implements IBSTree<T> {
       console.log(node.value)
       this.preOrderTraverseNode(node.left)
       this.preOrderTraverseNode(node.right)
+    }
+  }
+
+  /** 使用栈的中序遍历 */
+  inOrderTraverseUseOfStack() {
+    if (this.root) {
+      const stack: TreeNode<T>[] = []
+      let current: TreeNode<T> | null = this.root
+      while (stack.length || current) {
+        if (current) {
+          stack.push(current)
+          current = current.left
+        } else {
+          const node = stack.pop()
+          console.log(node?.value)
+          current = node?.right ?? null
+        }
+      }
     }
   }
 
